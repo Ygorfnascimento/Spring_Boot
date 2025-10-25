@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("customer")
-class CustomerController(
-    val customerService : CustomerService
-) {
+class CustomerController(val customerService: CustomerService) {
+
+    @GetMapping("/{id}")
+    fun getCustomer(@PathVariable id: Int): CustomerModel {
+        return customerService.getCustomer(id)
+    }
 
     @GetMapping
     fun getAll(@RequestParam name: String?): List<CustomerModel> {
@@ -24,21 +27,15 @@ class CustomerController(
         customerService.create(customer)
     }
 
-    @GetMapping("/{id}")
-    fun getCustomer(@PathVariable id: String): CustomerModel {
-        return customerService.getCustomer(id)
-    }
-
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun update(@PathVariable id: String, @RequestBody customer: PutCustomerRequest) {
+    fun update(@PathVariable id: Int, @RequestBody customer: PutCustomerRequest) {
         customerService.update(id, customer)
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun delete(@PathVariable id: String) {
+    fun delete(@PathVariable id: Int) {
         customerService.delete(id)
     }
-
 }

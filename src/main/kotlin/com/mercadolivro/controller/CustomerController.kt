@@ -10,16 +10,12 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("customer")
 class CustomerController(
-    val customerService: CustomerService
+    val customerService : CustomerService
 ) {
 
     @GetMapping
-    fun getAll(@RequestParam(required = false) name: String?): List<CustomerModel> {
-        return if (name != null) {
-            customerService.customers.filter { it.name.contains(name, ignoreCase = true) }
-        } else {
-            customerService.customers
-        }
+    fun getAll(@RequestParam name: String?): List<CustomerModel> {
+        return customerService.getAll(name)
     }
 
     @PostMapping
@@ -30,7 +26,7 @@ class CustomerController(
 
     @GetMapping("/{id}")
     fun getCustomer(@PathVariable id: String): CustomerModel {
-        return customerService.customers.first { it.id == id }
+        return customerService.getCustomer(id)
     }
 
     @PutMapping("/{id}")
@@ -44,4 +40,5 @@ class CustomerController(
     fun delete(@PathVariable id: String) {
         customerService.delete(id)
     }
+
 }

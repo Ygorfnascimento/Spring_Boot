@@ -3,7 +3,9 @@ package com.mercadolivro.service
 import com.mercadolivro.controller.request.PostCustomerRequest
 import com.mercadolivro.controller.request.PutCustomerRequest
 import com.mercadolivro.model.CustomerModel
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.bind.annotation.*
 
 @Service
 class CustomerService {
@@ -11,29 +13,28 @@ class CustomerService {
     val customers = mutableListOf<CustomerModel>()
 
     fun getAll(name: String?): List<CustomerModel> {
-        return if (name != null) {
-            customers.filter { it.name.contains(name, ignoreCase = true) }
-        } else {
-            customers
+        name?.let {
+            return customers.filter { it.name.contains(name, true) }
         }
+        return customers
     }
 
     fun create(customer: PostCustomerRequest) {
-        val id = if (customers.isEmpty()) {
-            "1"
-        } else {
-            (customers.last().id.toInt() + 1).toString()
-        }
+        val id = if(customers.isEmpty()) {
+            1
+        } else{
+            customers.last().id.toInt() + 1
+        }.toString()
 
         customers.add(CustomerModel(id, customer.name, customer.email))
     }
 
     fun getCustomer(id: String): CustomerModel {
-        return customers.first { it.id == id }
+        return customers.filter { it.id == id }.first()
     }
 
     fun update(id: String, customer: PutCustomerRequest) {
-        customers.firstOrNull { it.id == id }?.let {
+        customers.filter { it.id == id }.first().let {
             it.name = customer.name
             it.email = customer.email
         }
@@ -42,4 +43,5 @@ class CustomerService {
     fun delete(id: String) {
         customers.removeIf { it.id == id }
     }
+
 }

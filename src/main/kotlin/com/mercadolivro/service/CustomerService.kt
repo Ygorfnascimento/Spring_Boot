@@ -3,45 +3,38 @@ package com.mercadolivro.service
 import com.mercadolivro.controller.request.PostCustomerRequest
 import com.mercadolivro.controller.request.PutCustomerRequest
 import com.mercadolivro.model.CustomerModel
-import org.springframework.http.HttpStatus
+import com.mercadolivro.repository.CustomerRepository
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.*
 
 @Service
-class CustomerService {
-
-    val customers = mutableListOf<CustomerModel>()
+class CustomerService(val customerRepository: CustomerRepository) {
 
     fun getAll(name: String?): List<CustomerModel> {
-        name?.let {
-            return customers.filter { it.name.contains(name, true) }
+        return if (name != null) {
+            customerRepository.findAll().filter { it.name.contains(name, ignoreCase = true) }
+        } else {
+            customerRepository.findAll()
         }
-        return customers
     }
 
     fun create(customer: PostCustomerRequest) {
-        val id = if(customers.isEmpty()) {
-            1
-        } else{
-            customers.last().id.toInt() + 1
-        }.toString()
-
-        customers.add(CustomerModel(id, customer.name, customer.email))
+        val newCustomer = CustomerModel(name = customer.name, email = customer.email)
+        customerRepository.save(newCustomer)
     }
 
-    fun getCustomer(id: String): CustomerModel {
-        return customers.filter { it.id == id }.first()
+    fun getCustomer(id: Int): CustomerModel {
+        return customerRepository.findById(id).orElseThrow { Exception("Customer not found") }
     }
 
-    fun update(id: String, customer: PutCustomerRequest) {
-        customers.filter { it.id == id }.first().let {
-            it.name = customer.name
-            it.email = customer.email
-        }
+    fun update(id: Int, customer: PutCustomerRequest) {
+        val existingCustomer = getCustomer(id)
+        existingCustomer.name = customer.name
+        existingCustomer.email = customer.email
+        customerRepository.save(existingCustomer)
     }
 
-    fun delete(id: String) {
-        customers.removeIf { it.id == id }
+    fun delete(id: Int) {
+        val existingCustomer = getCustomer(id)
+        customerRepository.delete(existingCustomer)
     }
-
 }

@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-
 
 @RestController
 
@@ -22,9 +22,14 @@ class CustomerController {
     val customers = mutableListOf<CustomerModel>()
 
     @GetMapping
-    fun getAll(): List<CustomerModel> {
-        return customers
+    fun getAll(@RequestParam(required = false) name: String?): List<CustomerModel> {
+        return if (name != null) {
+            customers.filter { it.name.contains(name, ignoreCase = true) }
+        } else {
+            customers
+        }
     }
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

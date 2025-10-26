@@ -11,7 +11,7 @@ class CustomerService(val customerRepository: CustomerRepository) {
 
     fun getAll(name: String?): List<CustomerModel> {
         return if (name != null) {
-            customerRepository.findAll().filter { it.name.contains(name, ignoreCase = true) }
+            customerRepository.findByNameContainingIgnoreCase(name)
         } else {
             customerRepository.findAll()
         }
@@ -23,13 +23,14 @@ class CustomerService(val customerRepository: CustomerRepository) {
     }
 
     fun getCustomer(id: Int): CustomerModel {
-        return customerRepository.findById(id).orElseThrow { Exception("Customer not found") }
+        return customerRepository.findById(id)
+            .orElseThrow { RuntimeException("Customer not found") }
     }
 
     fun update(id: Int, customer: PutCustomerRequest) {
         val existingCustomer = getCustomer(id)
-        existingCustomer.name = customer.name
-        existingCustomer.email = customer.email
+        customer.name?.let { existingCustomer.name = it }
+        customer.email?.let { existingCustomer.email = it }
         customerRepository.save(existingCustomer)
     }
 

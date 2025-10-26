@@ -8,9 +8,12 @@ data class CustomerModel(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
 
-    @Column
+    @Column(nullable = false)
     var name: String,
 
-    @Column
-    var email: String
+    @Column(nullable = false, unique = true)
+    var email: String,
+
+    @OneToMany(mappedBy = "customer", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    var books: List<BookModel> = emptyList()
 )

@@ -7,7 +7,9 @@ import com.mercadolivro.repository.CustomerRepository
 import org.springframework.stereotype.Service
 
 @Service
-class CustomerService(val customerRepository: CustomerRepository) {
+class CustomerService(
+    private val customerRepository: CustomerRepository
+) {
 
     fun getAll(name: String?): List<CustomerModel> {
         return if (name != null) {
@@ -18,24 +20,27 @@ class CustomerService(val customerRepository: CustomerRepository) {
     }
 
     fun create(customer: PostCustomerRequest) {
-        val newCustomer = CustomerModel(name = customer.name, email = customer.email)
+        val newCustomer = CustomerModel(
+            name = customer.name,
+            email = customer.email
+        )
         customerRepository.save(newCustomer)
     }
 
-    fun getCustomer(id: Int): CustomerModel {
+    fun getById(id: Int): CustomerModel {
         return customerRepository.findById(id)
             .orElseThrow { RuntimeException("Customer not found") }
     }
 
     fun update(id: Int, customer: PutCustomerRequest) {
-        val existingCustomer = getCustomer(id)
+        val existingCustomer = getById(id)
         customer.name?.let { existingCustomer.name = it }
         customer.email?.let { existingCustomer.email = it }
         customerRepository.save(existingCustomer)
     }
 
     fun delete(id: Int) {
-        val existingCustomer = getCustomer(id)
+        val existingCustomer = getById(id)
         customerRepository.delete(existingCustomer)
     }
 }

@@ -1,6 +1,7 @@
 package com.mercadolivro.model
 
 import com.mercadolivro.enums.BookStatus
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import jakarta.persistence.*
 import java.math.BigDecimal
 
@@ -23,5 +24,6 @@ data class BookModel(
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
+    @JsonIgnoreProperties("books") // evita loop infinito ao serializar
     var customer: CustomerModel? = null
 )

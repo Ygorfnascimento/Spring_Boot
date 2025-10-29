@@ -4,7 +4,8 @@ import com.mercadolivro.enums.BookStatus
 import jakarta.persistence.*
 import java.math.BigDecimal
 
-@Entity(name = "book")
+@Entity
+@Table(name = "book")
 data class BookModel(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -26,22 +26,23 @@ fun PutCustomerRequest.toCustomerModel(previousValue: CustomerModel): CustomerMo
     )
 }
 
-
 fun PostBookRequest.toBookModel(customer: CustomerModel): BookModel {
-    return BookModel(
+    val book = BookModel(
         name = this.name,
         price = this.price,
-        status = BookStatus.ATIVO,
         customer = customer
     )
+    book.status = BookStatus.ATIVO // ✅ agora o status é atribuído após criar o objeto
+    return book
 }
 
 fun PutBookRequest.toBookModel(previousValue: BookModel): BookModel {
-    return BookModel(
+    val book = BookModel(
         id = previousValue.id,
         name = this.name ?: previousValue.name,
         price = this.price ?: previousValue.price,
-        status = previousValue.status,
         customer = previousValue.customer
     )
+    book.status = previousValue.status
+    return book
 }

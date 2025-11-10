@@ -1,7 +1,7 @@
 package com.mercadolivro.model
 
-import com.mercadolivro.enums.BookStatus
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.mercadolivro.enums.BookStatus
 import jakarta.persistence.*
 import java.math.BigDecimal
 
@@ -18,12 +18,19 @@ data class BookModel(
     @Column(nullable = false)
     var price: BigDecimal,
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    var status: BookStatus = BookStatus.ATIVO,
-
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    @JsonIgnoreProperties("books") // evita loop infinito ao serializar
+    @JsonIgnoreProperties("books")
     var customer: CustomerModel? = null
-)
+) {
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    var status: BookStatus? = null
+        set(value) {
+            if (field == BookStatus.CANCELADO || field == BookStatus.DELETADO) {
+                throw Exception("Não é possível alterar um livro com status $field")
+            }
+            field = value
+        }
+}

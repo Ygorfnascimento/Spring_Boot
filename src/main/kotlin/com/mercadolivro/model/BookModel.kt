@@ -24,13 +24,27 @@ data class BookModel(
     var customer: CustomerModel? = null
 ) {
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     var status: BookStatus? = null
         set(value) {
+
             if (field == BookStatus.CANCELADO || field == BookStatus.DELETADO) {
-                throw Exception("Não é possível alterar um livro com status $field")
+                throw RuntimeException(
+                    "Não é possível alterar um livro com status ${field}"
+                )
             }
+
             field = value
         }
+
+    constructor(
+        id: Int? = null,
+        name: String,
+        price: BigDecimal,
+        customer: CustomerModel? = null,
+        status: BookStatus?
+    ) : this(id, name, price, customer) {
+        this.status = status
+    }
 }

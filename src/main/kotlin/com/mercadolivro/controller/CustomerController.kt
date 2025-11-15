@@ -2,6 +2,8 @@ package com.mercadolivro.controller
 
 import com.mercadolivro.controller.request.PostCustomerRequest
 import com.mercadolivro.controller.request.PutCustomerRequest
+import com.mercadolivro.controller.response.CustomerResponse
+import com.mercadolivro.extension.toResponse
 import com.mercadolivro.model.CustomerModel
 import com.mercadolivro.service.CustomerService
 import jakarta.validation.Valid
@@ -15,13 +17,13 @@ class CustomerController(
 ) {
 
     @GetMapping("/{id}")
-    fun getCustomer(@PathVariable id: Int): CustomerModel {
-        return customerService.findById(id)
+    fun getCustomer(@PathVariable id: Int): CustomerResponse {
+        return customerService.findById(id).toResponse()
     }
 
     @GetMapping
-    fun getAll(@RequestParam(required = false) name: String?): List<CustomerModel> {
-        return customerService.getAll(name)
+    fun getAll(@RequestParam name: String?): List<CustomerResponse> {
+        return customerService.getAll(name).map{it.toResponse()}
     }
 
     @PostMapping

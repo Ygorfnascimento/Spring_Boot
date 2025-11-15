@@ -1,1 +1,2 @@
-ALTER TABLE customer ADD COLUMN status varchar (100)
+ALTER TABLE customer
+    ADD COLUMN status VARCHAR(255) NOT NULL DEFAULT 'ATIVO';
